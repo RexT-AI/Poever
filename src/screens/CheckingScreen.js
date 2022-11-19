@@ -23,7 +23,7 @@ export default class App extends React.Component {
     if (Platform.OS === "ios") {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
+        alert("작업을 수행하기 위해서는 카메라 접근 권한이 필요합니다!");
       }
     }
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
@@ -58,7 +58,7 @@ export default class App extends React.Component {
     if (hasPermission === null) {
       return <View />;
     } else if (hasPermission === false) {
-      return <Text>No access to camera</Text>;
+      return <Text>카메라 접근 불가</Text>;
     } else {
       return (
         <View style={{ flex: 1 }}>
