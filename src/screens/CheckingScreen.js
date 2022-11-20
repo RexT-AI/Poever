@@ -14,7 +14,7 @@ import * as MediaLibrary from "expo-media-library";
 export default class App extends React.Component {
   state = {
     hasPermission: null,
-    cameraType: Camera.Constants.Type.back,
+    cameraType: Camera.Constants.Type.back,   //카메라 기본값은 후면 카메라
     
   };
 
@@ -45,7 +45,7 @@ export default class App extends React.Component {
     });
   };
 
-  //사진 찍는 함수명 : takePicture() -> 여기서 함수 설계!!!
+  //사진 찍는 함수
   takePicture = async () => {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };   //quality:0-1까지의 숫자, 1에 가까울수록 고화질, base64로 인코딩 하므로 true
@@ -65,7 +65,7 @@ export default class App extends React.Component {
 
   //찍은 사진을 갤러리에 저장
   savePhoto = async (uri) => {
-    const ALBUM_NAME = "Smiley Cam";
+    const ALBUM_NAME = "poeverPic";
 
     try {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
@@ -79,14 +79,6 @@ export default class App extends React.Component {
         } else {
           await MediaLibrary.addAssetsToAlbumAsync([asset], album.id)
         }
-        /*
-        setTimeout(
-          () =>
-            this.setState({
-              time2takePhoto: false,
-            }),
-          2000
-        )*/
       } else {
         this.setState({ hasPermission: false })
       }
@@ -94,7 +86,6 @@ export default class App extends React.Component {
       console.log(error)
     }
    }; 
-
 
   pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
