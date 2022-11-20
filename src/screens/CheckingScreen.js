@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, TouchableOpacity, Platform } from "react-native";
+import { Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import {
@@ -41,11 +41,26 @@ export default class App extends React.Component {
     });
   };
 
+  //사진 찍는 함수명 : takePicture() -> 여기서 함수 설계!!!
   takePicture = async () => {
     if (this.camera) {
-      let photo = await this.camera.takePictureAsync();
+      const options = { quality: 0.5, base64: true };
+
+      let photo = await this.camera.takePictureAsync(options);
+      this.setState(
+        {
+          photo: photo.base64,
+          scanning: false,
+          uri: photo.uri,
+        },
+        () => this.callGoogleVIsionApi(this.state.result)
+        // 이제 여기서 Call Google Vision API랑 연결 필요
+        // 내가 찍은 사진을 이미지 또는 텍스트로도 전송 가능
+      );
     }
   };
+
+  // callGoogleVisionApi = async (uri) => { }; -> 이런 식으로 만들어서 여기에 사진 저장하는 방식?
 
   pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -64,7 +79,7 @@ export default class App extends React.Component {
         <View style={{ flex: 1 }}>
           <Camera
             style={{ flex: 1 }}
-            type={this.state.cameraType}
+            type={this.state.type}
             ref={(ref) => {
               this.camera = ref;
             }}
@@ -96,6 +111,7 @@ export default class App extends React.Component {
                   alignItems: "center",
                   backgroundColor: "transparent",
                 }}
+                //사진 찍는 함수명 : takePicture()
                 onPress={() => this.takePicture()}
               >
                 <FontAwesome
@@ -118,6 +134,14 @@ export default class App extends React.Component {
               </TouchableOpacity>
             </View>
           </Camera>
+          <Image
+            style={{
+              width: 100,
+              height: 100,
+              resizeMode: "contain",
+            }}
+            source={{ uri: this.state.uri }}
+          />
         </View>
       );
     }
