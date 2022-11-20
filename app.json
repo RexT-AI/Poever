@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "poever",
+    "slug": "poever",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Header.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/Header.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aics.poever",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyDVKFbjV3qjS1NqgG-ibBjpXGjd3yvzVRU" }
+      }
+    }
+  }
+}
