@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
+import Standard from "../components/Standard";
 import {
   FontAwesome,
   Ionicons,
@@ -77,6 +78,7 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
+          <Standard />
           <Camera
             style={{ flex: 1 }}
             type={this.state.type}
@@ -134,14 +136,6 @@ export default class App extends React.Component {
               </TouchableOpacity>
             </View>
           </Camera>
-          <Image
-            style={{
-              width: 100,
-              height: 100,
-              resizeMode: "contain",
-            }}
-            source={{ uri: this.state.uri }}
-          />
         </View>
       );
     }

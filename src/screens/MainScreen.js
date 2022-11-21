@@ -61,7 +61,7 @@ export default function MainScreen({ navigation }) {
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("체크하기")}>
           <View style={{ paddingTop: 25 }}>
-            <Image source={MainImages.Header} style={imageStyles.title} />
+            <Image source={MainImages.header} style={imageStyles.title} />
           </View>
         </TouchableOpacity>
       </View>
