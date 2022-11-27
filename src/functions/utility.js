@@ -28,7 +28,7 @@ export function getSide(pred) {
     const right_ear = pred[0][16];
     const left_ear = pred[0][17];
 
-    console.log("hip");
+    // console.log("hip");
     if (left_hip != undefined && right_hip === undefined) return "left";
     else if (left_hip === undefined && right_hip != undefined) return "right";
     else if (left_hip != undefined && right_hip != undefined) {
@@ -38,7 +38,7 @@ export function getSide(pred) {
         }
     }
 
-    console.log("shoulder");
+    // console.log("shoulder");
     if (left_shoulder != undefined && right_shoulder === undefined) return "left";
     else if (left_shoulder === undefined && right_shoulder != undefined) return "right";
     else if (left_shoulder != undefined && right_shoulder != undefined) {
@@ -48,7 +48,7 @@ export function getSide(pred) {
         }
     }
 
-    console.log("ear");
+    // console.log("ear");
     if (left_ear === undefined && right_ear != undefined) return "left";
     else if (left_ear != undefined && right_ear === undefined) return "right";
     else if (left_ear != undefined && right_ear != undefined) {
@@ -58,7 +58,7 @@ export function getSide(pred) {
         }
     }
 
-    console.log("can't decide side");
+    // console.log("can't decide side");
     return undefined;
 }
 /**
@@ -136,11 +136,17 @@ export function func3(pred, side) {
     const left_ankle = pred[0][13];
 
     if (side == "right") {
-        if (left_knee === undefined) { console.log("31"); return false; }
+        if (left_knee === undefined) {
+            // console.log("31");
+            return false;
+        }
         if (right_knee === undefined || left_knee.score > right_knee + CMP_THRESHOLD) {
             return true;
         }
-        if (left_ankle === undefined) { console.log("32"); return false; }
+        if (left_ankle === undefined) {
+            // console.log("32");
+            return false;
+        }
         if (right_ankle === undefined && left_ankle.score > SCORE_THRESHOLD) {
             return true;
         }
@@ -172,18 +178,21 @@ export function func4(pred, side) {
     const left_knee = pred[0][12];
     const left_ankle = pred[0][13];
     // 다리를 꼰 경우(func4!=undefined) 무릎 각도 계산 X
-    if (func3(pred, side) != false) { console.log("41"); return undefined; }
+    if (func3(pred, side) != false) {
+        // console.log("41");
+        return undefined;
+    }
     // 오른쪽: 8-9-10
     if (side == "right") {
         if (right_hip === undefined || right_knee === undefined || right_ankle === undefined) {
-            console.log("42"); 
+            // console.log("42"); 
             return undefined;
         }
         if (right_hip < SCORE_THRESHOLD || right_knee < SCORE_THRESHOLD || right_ankle < SCORE_THRESHOLD ) {
-            console.log("43"); 
+            // console.log("43"); 
             return undefined;
         }
-        console.log("44"); 
+        // console.log("44"); 
         return getAngle(right_ankle, right_knee, right_hip);
     }
     // 왼쪽: 13-12-11
@@ -199,5 +208,15 @@ export function func4(pred, side) {
 export function getPose(pred) {
     const side = getSide(pred);
     if (side === undefined) return undefined;
-    return [func1(pred, side), func2(pred, side), func3(pred, side), func4(pred, side)];
+
+    var res1=true, res2=true, res3=func3(pred, side), res4=true;
+    const angle1 = func1(pred, side);
+    if (angle1 == undefined || 1.309 <= angle1) res1 = false;
+
+    const angle2 = func2(pred, side);
+    if (angle2 == undefined || 1.221 <= angle2) res2 = false;
+    const angle4 = func4(pred, side);
+    if (angle4 == undefined || angle4 <= 1.74533) res4 = false;
+    // console.log(angle1, angle2, angle4);
+    return [res1, res2, res3, res4];
 }
