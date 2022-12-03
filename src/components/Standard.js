@@ -30,6 +30,7 @@ if (res = [0,0,0,0]) { //default
       source={require("../../assets/leg_box.png")}
     />
   </View>);
+  
 
 } else if (res == [0,1,0,0]) { //spine
 
