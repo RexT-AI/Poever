@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, TouchableOpacity, Platform, Image } from "react-native";
+import { Text, View, TouchableOpacity, Platform, Image, StyleSheet } from "react-native";
 import { Camera } from "expo-camera";     //expo-camera import 
 import * as Permissions from "expo-permissions";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class App extends React.Component {
   state = {
@@ -57,7 +57,7 @@ export default class App extends React.Component {
           scanning: true,    //카메라를 보여줄지 안 보여줄지 [이거 false->true로 바꿨어요 사진 찍고 계속 켜져 있어야지 카메라에서 나가면 안되니까]
           uri: photo.uri,
         },
-        () => this.savePhoto(this.state.result) //일단 갤러리에 저장하는거로 함 
+        () => this.savetoLocal(this.state.uri) //일단 갤러리에 저장하는거로 함 
         );
       },2000);
     }
@@ -92,6 +92,60 @@ export default class App extends React.Component {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
   };
+
+  //찍은 사진을 로컬로 저장 
+  savetoLocal = async (uri) => {
+    try {
+      AsyncStorage.setItem('image',JSON.stringify(this.state.uri), () => { 
+        console.log('save image to local')
+      })
+    }catch (error) {
+      console.log(error)
+    }
+  };
+
+
+  /*
+   //찍은 사진을 API로 전송
+  sendToAPI = async (uri) =>{
+    var body = new FormData();
+    pictures.map((picture,index)=>{
+      var photo ={
+        uri : photo.uri,
+        type : 'multipart/form-data',
+        name : uri
+      }
+      body.append('image',photo);
+    })
+    //서버로 전송
+    axios.post('https://naveropenapi.apigw.ntruss.com/vision-pose/v1/estimate',body,{
+    headers:{
+      'X-NCP-APIGW-API-KEY-ID' : {ieqs47r6e9},
+      'X-NCP-APIGW-API-KEY' : {SWYZWyn7mEq7Qx4fhgGVSDw0IrO2x2Hm0YZsexNR},
+      'content-type': 'multipart/form-data'
+    }
+    })
+  }
+
+  sendToAPI = async (uri) => {
+    let res = await fetch(
+      "https://naveropenapi.apigw.ntruss.com/vision-pose/v1/estimate",{
+        method: 'POST',
+        headers: {
+          'X-NCP-APIGW-API-KEY-ID': CLIENT_ID,
+          'X-NCP-APIGW-API-KEY': CLIENT_KEY,
+          'Content-Type': 'multipart/form-data'
+        },
+        body: {
+          image: uri
+        }
+      }
+    ).then((res)=>response.json())
+    .then((json)=>{
+      console.log(res);
+    });
+  }
+  */
 
   //카메라 렌더
   render() {
