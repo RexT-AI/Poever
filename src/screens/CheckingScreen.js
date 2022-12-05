@@ -17,6 +17,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Standard from "../components/Standard";
 
 export default class App extends React.Component {
   state = {
@@ -120,6 +121,7 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
+          <Standard />
           <Camera
             style={{ flex: 1 }}
             type={this.state.type}
