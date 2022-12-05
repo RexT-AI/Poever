@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import * as util from "./Logic.js"; // 로직 파트 불러오기
 import Axios from "axios";
+
 export default function Front() {
   const [pred, setPred] = useState([]);
   const localUrl = "ip주소:3000/pose";
