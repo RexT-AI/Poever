@@ -1,6 +1,13 @@
 import React from "react";
-import { Text, View, TouchableOpacity, Platform, Image } from "react-native";
-import { Camera } from "expo-camera";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  Image,
+  StyleSheet,
+} from "react-native";
+import { Camera } from "expo-camera"; //expo-camera import
 import * as Permissions from "expo-permissions";
 import {
   FontAwesome,
@@ -8,17 +15,20 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class App extends React.Component {
   state = {
     hasPermission: null,
-    cameraType: Camera.Constants.Type.back,
+    cameraType: Camera.Constants.Type.back, //카메라 기본값은 후면 카메라
   };
 
   async componentDidMount() {
     this.getPermissionAsync();
   }
 
+  //카메라 사용 허용 여부 요청
   getPermissionAsync = async () => {
     if (Platform.OS === "ios") {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -30,9 +40,9 @@ export default class App extends React.Component {
     this.setState({ hasPermission: status === "granted" });
   };
 
+  //전면&후면 카메라 모드 변경
   handleCameraType = () => {
     const { cameraType } = this.state;
-
     this.setState({
       cameraType:
         cameraType === Camera.Constants.Type.back
@@ -41,26 +51,47 @@ export default class App extends React.Component {
     });
   };
 
-  //사진 찍는 함수명 : takePicture() -> 여기서 함수 설계!!!
+  //사진 찍는 함수
   takePicture = async () => {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
-
-      let photo = await this.camera.takePictureAsync(options);
-      this.setState(
-        {
-          photo: photo.base64,
-          scanning: false,
-          uri: photo.uri,
-        },
-        () => this.callGoogleVIsionApi(this.state.result)
-        // 이제 여기서 Call Google Vision API랑 연결 필요
-        // 내가 찍은 사진을 이미지 또는 텍스트로도 전송 가능
-      );
+      const options = { quality: 0.5, base64: true }; //quality:0-1까지의 숫자, 1에 가까울수록 고화질, base64로 인코딩 하므로 true
+      setInterval(async () => {
+        let photo = await this.camera.takePictureAsync(options);
+        this.setState(
+          {
+            photo: photo.base64, //base64로 인코딩
+            scanning: true, //카메라를 보여줄지 안 보여줄지 [이거 false->true로 바꿨어요 사진 찍고 계속 켜져 있어야지 카메라에서 나가면 안되니까]
+            uri: photo.uri,
+          },
+          () => this.savetoLocal(this.state.uri) //일단 갤러리에 저장하는거로 함
+        );
+      }, 2000);
     }
   };
 
-  // callGoogleVisionApi = async (uri) => { }; -> 이런 식으로 만들어서 여기에 사진 저장하는 방식?
+  //찍은 사진을 갤러리에 저장
+  savePhoto = async (uri) => {
+    const ALBUM_NAME = "poeverPic";
+
+    try {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+      if (status === "granted") {
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        let album = await MediaLibrary.getAlbumAsync(ALBUM_NAME);
+
+        if (album === null) {
+          album = await MediaLibrary.createAlbumAsync(ALBUM_NAME, asset);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album.id);
+        }
+      } else {
+        this.setState({ hasPermission: false });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -68,6 +99,18 @@ export default class App extends React.Component {
     });
   };
 
+  //찍은 사진을 로컬로 저장
+  savetoLocal = async (uri) => {
+    try {
+      AsyncStorage.setItem("image", JSON.stringify(this.state.uri), () => {
+        console.log("save image to local");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //카메라 렌더
   render() {
     const { hasPermission } = this.state;
     if (hasPermission === null) {
@@ -105,7 +148,7 @@ export default class App extends React.Component {
                   style={{ color: "#fff", fontSize: 40 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity //카메라 사진 찍는 버튼이 눌리는 event 발생 시
                 style={{
                   alignSelf: "flex-end",
                   alignItems: "center",
@@ -119,7 +162,7 @@ export default class App extends React.Component {
                   style={{ color: "#fff", fontSize: 40 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity //카메라 전면/후면 바꾸는 버튼이 눌리는 event 발생 시
                 style={{
                   alignSelf: "flex-end",
                   alignItems: "center",
