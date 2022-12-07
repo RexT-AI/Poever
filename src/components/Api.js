@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-var CLIENT_ID = "API ID";
-var CLIENT_SECRET = "API KEY";
-const filename = __dirname + "/../data/example.json";
+var CLIENT_ID = "";
+var CLIENT_SECRET = "";
+const filename = __dirname + "../data/example.json";
 var fs = require("fs");
 app.get("/pose", function (req, res) {
   var request = require("request");

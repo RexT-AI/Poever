@@ -1,13 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Platform,
-  Image,
-  StyleSheet,
-} from "react-native";
+import { Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Camera } from "expo-camera"; //expo-camera import
 import * as Permissions from "expo-permissions";
 import * as util from "../components/Logic.js"; // 로직 불러오기
@@ -20,7 +13,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Standard from "../components/Standard";
+//import Standard from "../components/Standard";
 
 export default class App extends React.Component {
   state = {
@@ -108,6 +101,7 @@ export default class App extends React.Component {
     try {
       AsyncStorage.setItem("image", JSON.stringify(this.state.uri), () => {
         console.log("save image to local");
+        this.gotoAPI(uri);
       });
     } catch (error) {
       console.log(error);
@@ -116,7 +110,7 @@ export default class App extends React.Component {
 
   gotoAPI = async (uri) => {
     const [pred, setPred] = useState([]);
-    const localUrl = "ip주소:3000/pose";
+    const localUrl = "114.205.106.204:3000/pose";
     //ip주소: 현재 연결되어 있는 네트워크 속성 - IPv4 주소
     //port: 3000
     const axiosApi = async () => {
@@ -146,7 +140,7 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
-          <Standard />
+          /
           <Camera
             style={{ flex: 1 }}
             type={this.state.type}
