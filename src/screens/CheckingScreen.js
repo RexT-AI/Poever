@@ -101,14 +101,14 @@ export default class App extends React.Component {
     try {
       AsyncStorage.setItem("image", JSON.stringify(this.state.uri), () => {
         console.log("save image to local");
-        this.gotoAPI(uri);
+        //this.gotoAPI(uri);
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  gotoAPI = async (uri) => {
+  /*gotoAPI = async (uri) => {
     const [pred, setPred] = useState([]);
     const localUrl = "114.205.106.204:3000/pose";
     //ip주소: 현재 연결되어 있는 네트워크 속성 - IPv4 주소
@@ -128,7 +128,7 @@ export default class App extends React.Component {
       axiosApi(); // pred에 api 결과 json 저장
     }, [pred]);
     console.log(util.getPose(pred)); // json을 인자로 넘겨줄 것
-  };
+  };*/
 
   //카메라 렌더
   render() {
