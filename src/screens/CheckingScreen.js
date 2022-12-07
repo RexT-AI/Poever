@@ -140,7 +140,6 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
-          /
           <Camera
             style={{ flex: 1 }}
             type={this.state.type}
