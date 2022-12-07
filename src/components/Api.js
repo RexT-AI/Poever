@@ -1,76 +1,37 @@
-import { StatusBar } from "expo-status-bar";
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+const express = require("express");
+const app = express();
+const path = require("path");
 
-import axios from "axios";
+var CLIENT_ID = "API ID";
+var CLIENT_SECRET = "API KEY";
+const filename = __dirname + "/../data/example.json";
+var fs = require("fs");
+app.get("/pose", function (req, res) {
+  var request = require("request");
+  var api_url = "https://naveropenapi.apigw.ntruss.com/vision-pose/v1/estimate"; // 사람 인식
 
-const CLIENT_ID = "ieqs47r6e9";
-const CLIENT_KEY = "SWYZWyn7mEq7Qx4fhgGVSDw0IrO2x2Hm0YZsexNR";
-
-// 임의로 사진 저장
-const IMAGE = <Image source={require("../../assets/images/pose.jpg")} />;
-
-export default function Api() {
-  axios
-    .post("https://naveropenapi.apigw.ntruss.com/vision-pose/v1/estimate", {
+  var _formData = {
+    image: "image",
+    image: fs.createReadStream(__dirname + "/../data/example6.jpg"), // FILE 이름
+  };
+  var _req = request
+    .post({
+      url: api_url,
+      formData: _formData,
       headers: {
-        "X-NCP-APIGW-API-KEY-ID": { CLIENT_ID },
-        "X-NCP-APIGW-API-KEY": { CLIENT_KEY },
-      },
-      body: {
-        Image: { IMAGE },
+        "X-NCP-APIGW-API-KEY-ID": CLIENT_ID,
+        "X-NCP-APIGW-API-KEY": CLIENT_SECRET,
       },
     })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
+    .on("response", function (response) {
+      console.log(response.statusCode); // 200
+      console.log(response.headers["content-type"]);
     });
-}
+  _req.pipe(res); //console 출력
+});
 
-// export default function App() {
-//   const [info, setInfo] = useState([]);
-//   const [pred, setPred] = useState([]);
+app.use(express.static(path.join(__dirname, "../data")));
 
-//   let form = new FormData();
-//   let data = {
-//     uri: 'https://i0.wp.com/pixahive.com/wp-content/uploads/2021/03/A-boy-pose-on-road-365332-pixahive.jpg?fit=992%2C1488&ssl=1',
-//     type: 'multipart/form-data',
-//     name: 'single.jpg'
-//   }
-//   form.append('image', data);
-//   const getPrediction = () => {
-//     return fetch('https://naveropenapi.apigw.ntruss.com/vision-pose/v1/estimate', {
-//       method: 'POST',
-//       headers: {
-//         'X-NCP-APIGW-API-KEY-ID': CLIENT_ID,
-//         'X-NCP-APIGW-API-KEY': CLIENT_KEY,
-//         'Content-Type': 'multipart/form-data'
-//       },
-//       body: {
-//         image: data
-//       }
-//     }).then(response => response.json())
-//       .then(json => console.log(json))
-//       .catch((error) => console.error(error));
-//   }
-//   useEffect(() => {
-//     getPrediction();
-//   })
-//   return (
-//     <View style={styles.container}>
-//       <Text>Offffpensdfsdf up App.js to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+app.listen(3000, function () {
+  console.log("http://localhost:3000/pose app listening on port 3000!");
+});

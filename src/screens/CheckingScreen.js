@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -9,6 +10,8 @@ import {
 } from "react-native";
 import { Camera } from "expo-camera"; //expo-camera import
 import * as Permissions from "expo-permissions";
+import * as util from "../components/Logic.js"; // 로직 불러오기
+import Axios from "axios";
 import {
   FontAwesome,
   Ionicons,
@@ -109,6 +112,28 @@ export default class App extends React.Component {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  gotoAPI = async (uri) => {
+    const [pred, setPred] = useState([]);
+    const localUrl = "ip주소:3000/pose";
+    //ip주소: 현재 연결되어 있는 네트워크 속성 - IPv4 주소
+    //port: 3000
+    const axiosApi = async () => {
+      try {
+        Axios.get(localUrl).then((res) => {
+          console.log(res.data); // api 결과
+          setPred(res.data);
+          console.log("pred", pred); // api 결과 중 'predictions' 값
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    useEffect(() => {
+      axiosApi(); // pred에 api 결과 json 저장
+    }, [pred]);
+    console.log(util.getPose(pred)); // json을 인자로 넘겨줄 것
   };
 
   //카메라 렌더
